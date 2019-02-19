@@ -1,0 +1,7 @@
+meta/*.json
+*.pyc
+dbinfo.json
+__pycache__/*
+data/*.csv
+data/*.zip
+exports/*.zip
