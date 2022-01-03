@@ -2,7 +2,7 @@ import sys
 import db
 import csv
 import json
-from unidecode import unidecode
+import argparse
 from datetime import datetime
 
 def how_it_works():
@@ -60,37 +60,25 @@ def show_argument(arg):
 
     sys.exit()
 
-arg_flag = False
 
-try:
-    arg = sys.argv[1].lower()
-    if arg[0] == "-":
-        arg_flag = True
-except:
-    pass
-
-if arg_flag:
-    show_argument(arg)
+parser = argparse.ArgumentParser()
+parser.add_argument("--server", "-s", help = "Server IP address", required=True)
+parser.add_argument("--project", "-p", help = "Project", required=True)
+parser.add_argument("--title", "-t", help="Query title", required=True)
+parser.add_argument("--query", "-q", help="Query text", required=True)
+parser.add_argument("--description", "-d", help="Description", default = "")
+args = parser.parse_args()
 
 query = dict()
-try:
-    query["server"] = sys.argv[1]
-    query["project"] = sys.argv[2]
-    query["title"] = sys.argv[3]
-    query["query"] = sys.argv[4]
-    if query["server"] == "data1":
-        query["server"] = "10.2.173.9"
-    query["created"] = str(datetime.now())
-    try:
-        query["description"] = sys.argv[5]
-    except:
-        pass
 
-except:
-    try:
-        query = load_query(sys.argv[1])
-    except:
-        how_it_works()
+query["server"] = args.server
+query["project"] = args.project
+query["title"] = args.title
+query["query"] = args.query
+if query["server"] == "data1":
+    query["server"] = "10.2.173.9"
+query["created"] = str(datetime.now())    
+query["description"] = args.description
 
 dbc = db.mssql(query["server"], "master")
 rows_count = 0
